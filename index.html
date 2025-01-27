@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أساليب التعلم والتطوير</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background-color: #e5f0ff;
+            padding: 2rem;
+            border-radius: 8px 8px 0 0;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 1.5rem;
+            color: #1e3a8a;
+            margin-bottom: 1rem;
+        }
+
+        .name-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin: 0 auto;
+            display: block;
+            text-align: right;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        .question {
+            margin-bottom: 2rem;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .options {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .option-btn {
+            min-width: 80px;
+            padding: 0.5rem 1rem;
+            border: 2px solid #2563eb;
+            border-radius: 4px;
+            background-color: white;
+            color: #2563eb;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover {
+            background-color: #e5f0ff;
+        }
+
+        .option-btn.selected {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        .option-btn.correct {
+            background-color: #22c55e;
+            border-color: #22c55e;
+            color: white;
+        }
+
+        .option-btn.incorrect {
+            background-color: #ef4444;
+            border-color: #ef4444;
+            color: white;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 2rem;
+        }
+
+        .submit-btn:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .result {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .result-name {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-score {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-message {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">أساليب التعلم والتطوير</h1>
+            <input type="text" class="name-input" placeholder="الرجاء إدخال اسمك" id="nameInput">
+        </div>
+        <div class="content" id="questionsContainer"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                id: 1,
+                text: "التعلم الرسمي في بيئة الفصل الدراسي",
+                correctAnswer: "10"
+            },
+            {
+                id: 2,
+                text: "التعلم غير الرسمي",
+                correctAnswer: "20"
+            },
+            {
+                id: 3,
+                text: "التعلم التجريبي",
+                correctAnswer: "70"
+            },
+            {
+                id: 4,
+                text: "التدريب",
+                correctAnswer: "10"
+            },
+            {
+                id: 5,
+                text: "التوجيه",
+                correctAnswer: "20"
+            },
+            {
+                id: 6,
+                text: "بناء المهارات",
+                correctAnswer: "70"
+            },
+            {
+                id: 7,
+                text: "التدريب المستهدف",
+                correctAnswer: "10"
+            },
+            {
+                id: 8,
+                text: "التدريب المتقاطع",
+                correctAnswer: "20"
+            },
+            {
+                id: 9,
+                text: "التدريب عن بعد",
+                correctAnswer: "10"
+            },
+            {
+                id: 10,
+                text: "تدريب الموظفين الجدد",
+                correctAnswer: "10"
+            }
+        ];
+
+        const answers = {};
+        let submitted = false;
+
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            questions.forEach(question => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+
+                const questionText = document.createElement('p');
+                questionText.className = 'question-text';
+                questionText.textContent = `${question.id}. ${question.text}`;
+
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options';
+
+                ['70', '20', '10'].forEach(option => {
+                    const button = document.createElement('button');
+                    button.className = 'option-btn';
+                    button.textContent = `${option}%`;
+                    
+                    if (answers[question.id] === option) {
+                        button.classList.add('selected');
+                        if (submitted) {
+                            if (option === question.correctAnswer) {
+                                button.classList.add('correct');
+                            } else {
+                                button.classList.add('incorrect');
+                            }
+                        }
+                    } else if (submitted && option === question.correctAnswer) {
+                        button.classList.add('correct');
+                    }
+
+                    button.addEventListener('click', () => {
+                        if (!submitted) {
+                            answers[question.id] = option;
+                            renderQuestions();
+                        }
+                    });
+
+                    optionsDiv.appendChild(button);
+                });
+
+                questionDiv.appendChild(questionText);
+                questionDiv.appendChild(optionsDiv);
+                container.appendChild(questionDiv);
+            });
+
+            if (!submitted) {
+                const submitButton = document.createElement('button');
+                submitButton.className = 'submit-btn';
+                submitButton.textContent = 'تقديم الإجابات';
+                submitButton.disabled = Object.keys(answers).length !== questions.length || !document.getElementById('nameInput').value;
+                submitButton.addEventListener('click', handleSubmit);
+                container.appendChild(submitButton);
+            } else {
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'result';
+                
+                const name = document.getElementById('nameInput').value;
+                const score = calculateScore();
+                
+                resultDiv.innerHTML = `
+                    <p class="result-name">شكراً لك ${name} على المشاركة!</p>
+                    <p class="result-score">نتيجتك: ${score}%</p>
+                    <p class="result-message">نأمل أن تكون قد استفدت من هذا التقييم في فهم منهجية 70/20/10 للتعلم والتطوير</p>
+                `;
+                
+                container.appendChild(resultDiv);
+            }
+        }
+
+        function calculateScore() {
+            const correctAnswers = Object.entries(answers).filter(
+                ([questionId, answer]) => questions.find(q => q.id === parseInt(questionId)).correctAnswer === answer
+            ).length;
+            return Math.round((correctAnswers / questions.length) * 100);
+        }
+
+        function handleSubmit() {
+            submitted = true;
+            renderQuestions();
+        }
+
+        document.getElementById('nameInput').addEventListener('input', renderQuestions);
+        renderQuestions();
+    </script>
+</body>
+</html>
